@@ -1,4 +1,4 @@
-# REACT
+# REACT (CLIENT)
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
@@ -23,3 +23,8 @@ client/.env.production.local
 client/npm-debug.log*
 client/yarn-debug.log*
 client/yarn-error.log*
+
+# NODE (SERVER)
+
+server/node_modules
+server/dist
