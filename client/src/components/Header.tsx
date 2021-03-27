@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {NavLink} from "react-router-dom";
+import {NavLink, useHistory} from "react-router-dom";
 import "./scss/header.scss";
 
 interface IHeaderProps {
@@ -9,6 +9,8 @@ interface IHeaderProps {
 }
 
 const Header = ({isAuth, img, username}: IHeaderProps) => {
+    
+    const history = useHistory();
 
     const [displayCog, setDisplayCog] = useState(false);
 
@@ -30,8 +32,8 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
         if (!isAuth) {
             return (
                 <>
-                <button type="button" className="primary">Sign In</button>
-                <button type="button">Sign Up</button>
+                <button type="button" onClick={() => history.push("/login")}>Sign In</button>
+                <button type="button" onClick={() => history.push("/register")}>Sign Up</button>
                 </>
             )
         }
