@@ -24,7 +24,7 @@ interface IUser {
 
 const App = () => {
 
-  const [userData, setUserData] = useState<IUser>({token: {id: 0, username: "Tomas", verified: true, email: "tomas@ironwill.com", therank: "user", theimg: "https://i.pinimg.com/originals/e0/00/90/e00090ebaee8a7036a15439452006ad2.jpg"}, auth: true})
+  const [userData, setUserData] = useState<IUser>({token: {id: 0, username: "Tomas", verified: true, email: "tomas@ironwill.com", therank: "user", theimg: "https://i.pinimg.com/originals/e0/00/90/e00090ebaee8a7036a15439452006ad2.jpg"}, auth: false})
 
   return (
     <>
