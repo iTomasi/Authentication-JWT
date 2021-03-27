@@ -2,6 +2,7 @@ import React from "react";
 import "./scss/form.scss";
 
 const Register = () => {
+
     return (
         <form className="iw_form">
             <div className="formSection">

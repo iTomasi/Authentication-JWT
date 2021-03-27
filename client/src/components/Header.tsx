@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {NavLink, useHistory} from "react-router-dom";
+import {NavLink, useHistory, Link} from "react-router-dom";
 import "./scss/header.scss";
 
 interface IHeaderProps {
@@ -43,7 +43,7 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
             <div className="iw_header__right-setting">
                 <i className="i__cog fas fa-cog" onClick={showOptions}></i>
                 <div className="iw_header__right-setting-options" style={{display: displayCog ? "flex" : "none"}}>
-                    <NavLink to="/">Profile</NavLink>
+                    <Link to="/">Profile</Link>
                 </div>
             </div>
             <img src={img} alt={username} />
