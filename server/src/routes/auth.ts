@@ -6,6 +6,36 @@ import jwt from "jsonwebtoken";
 import config from "../config/config"
 const router = Router();
 
+router.get("/", (req, res) => {
+    const tokenHeader: any = req.headers["x-access-token"]
+
+    try {
+        const token = jwt.verify(tokenHeader, config.JWT);
+
+        res.json({
+            token,
+            auth: true
+        })
+
+    }
+
+    catch(e) {
+        res.json({
+            token: {
+                id: 0,
+                username: "",
+                verified: 0,
+                email: "",
+                theimg: "",
+                iat: 0,
+                exp: 0
+            },
+
+            auth: false
+        })
+    }
+})
+
 router.post("/register", (req, res) => {
     const {username, email, confirmemail, password, confirmpassword} = req.body;
 
@@ -41,7 +71,7 @@ router.post("/login", (req, res) => {
         else if (resp[0].verified === 0) return res.json({message: "Your account is not verified"});
 
         const compare = await bcrypt.compare(password, resp[0].password);
-        
+
         if (!compare) return res.json({message: "Password wrong"});
 
         const token = jwt.sign({

@@ -35,7 +35,7 @@ const Login = () => {
                 showNotification(res.data.message, "success");
                 localStorage.setItem("token", res.data.token);
                 setTimeout(() => {
-                    history.push("/")
+                    window.location.href = "/";
                 }, 3000)
             })
     }

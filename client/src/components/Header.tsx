@@ -46,8 +46,11 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
                     <Link to="/">Profile</Link>
                 </div>
             </div>
-            <img src={img} alt={username} />
-            <button type="button">Logout</button>
+            <img src={"http://localhost:4000/img/" + img} alt={username} />
+            <button type="button" onClick={() => {
+                localStorage.removeItem("token");
+                window.location.href = "/login"
+            }}>Logout</button>
             </>
         )
 

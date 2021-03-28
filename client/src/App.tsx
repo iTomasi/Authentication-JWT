@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Switch, Route} from "react-router-dom";
+import {isAuthenticated} from "./isAuthenticated";
 
 // Components
 import Header from "./components/Header";
@@ -16,7 +17,9 @@ interface IUser {
     verified: boolean,
     email: string,
     therank: string,
-    theimg: string
+    theimg: string,
+    iat: number,
+    exp: number
   },
 
   auth: boolean
@@ -24,7 +27,14 @@ interface IUser {
 
 const App = () => {
 
-  const [userData, setUserData] = useState<IUser>({token: {id: 0, username: "Tomas", verified: true, email: "tomas@ironwill.com", therank: "user", theimg: "https://i.pinimg.com/originals/e0/00/90/e00090ebaee8a7036a15439452006ad2.jpg"}, auth: false})
+  const [userData, setUserData] = useState<IUser>({token: {id: 0, username: "", verified: true, email: "", therank: "", theimg: "", iat: 0, exp: 0}, auth: true})
+
+  useEffect(() => {
+    isAuthenticated()
+      .then(res => {
+        setUserData(res.data)
+      })
+  }, [])
 
   return (
     <>
