@@ -1,8 +1,11 @@
 import React, {useState} from "react";
-import Notification from "../components/Notification"
+import Notification from "../components/Notification";
+import {useHistory} from "react-router-dom";
+import Axios from "axios";
 import "./scss/form.scss";
 
 const Login = () => {
+    const history = useHistory();
 
     const [notification, setNotification] = useState({
         type: "",
@@ -23,7 +26,18 @@ const Login = () => {
             return
         }
 
-        showNotification("Loggin", "success")
+        Axios.post("http://localhost:4000/auth/login", {username, password}, {
+            headers: {"Content-Type": "application/json"}
+        })
+            .then(res => {
+                if (res.data.message !== "Logged") return showNotification(res.data.message, "error");
+
+                showNotification(res.data.message, "success");
+                localStorage.setItem("token", res.data.token);
+                setTimeout(() => {
+                    history.push("/")
+                }, 3000)
+            })
     }
 
     const showNotification = (msg: string, type: string) => {

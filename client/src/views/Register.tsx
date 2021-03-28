@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {useHistory} from "react-router-dom";
 import Notification from "../components/Notification";
+import Axios from "axios";
 import "./scss/form.scss";
 
 const Register = () => {
@@ -38,11 +39,20 @@ const Register = () => {
             return
         }
 
-        showNotification("Registered!", "success");
+        Axios.post("http://localhost:4000/auth/register", {username, email, confirmemail: confirm_email, password, confirmpassword: confirm_password}, {
+            headers: {"Content-Type": "application/json"}
+        })
+            .then(res => {
+                if (res.data.message !== "Registered") {
+                    showNotification(res.data.message, "error")
+                    return
+                }
 
-        setTimeout(() => {
-            history.push("/login")
-        }, 3000)
+                showNotification(res.data.message, "success")
+                setTimeout(() => {
+                    history.push("/login")
+                }, 3000)
+            })
     }
 
     const showNotification = (msg: string, type: string) => {
