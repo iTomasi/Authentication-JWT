@@ -1,8 +1,9 @@
 import React, {useState} from "react";
-import {useHistory} from "react-router-dom";
+import {useHistory, Link} from "react-router-dom";
 import Notification from "../components/Notification";
 import Axios from "axios";
 import "./scss/form.scss";
+import "./scss/register.scss";
 
 const Register = () => {
     const history = useHistory();
@@ -11,6 +12,13 @@ const Register = () => {
         type: "error",
         msg: "asdasd xd",
         addActive: false
+    })
+
+    const [userRegistered, setUserRegistered] = useState({
+        display: false,
+        username: "",
+        verifyToken: "",
+        verifyCode: ""
     })
 
     let notification_TimeOut: any;
@@ -48,10 +56,9 @@ const Register = () => {
                     return
                 }
 
-                showNotification(res.data.message, "success")
-                setTimeout(() => {
-                    history.push("/login")
-                }, 3000)
+                setUserRegistered((prev: any) => (
+                    {...prev, display: true, username: res.data.userData.username, verifyCode: res.data.userData.vcode, verifyToken: res.data.token}
+                ))
             })
     }
 
@@ -104,6 +111,18 @@ const Register = () => {
 
             <button type="submit">Register</button>
         </form>
+
+        <div className="accountRegistered" style={{display: userRegistered.display ? "flex" : "none"}}>
+            <div className="divBox">
+                <h3>Hey {userRegistered.username} your account was created satisfactorily</h3>
+                <p className="divBox__p-warning">*for reasons that this project will not be carried out to production the verification will not be sent by email.*</p>
+                <p>Please save this code: <span>{userRegistered.verifyCode}</span></p>
+                <p>When you already saved the verify code please click in the following link</p>
+                <Link to={"/verify-acc/" + userRegistered.verifyToken}>Click me brother</Link>
+
+
+            </div>
+        </div>
         </>
     )
 }

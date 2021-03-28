@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import Register from "./views/Register";
 import Login from "./views/Login";
 import Home from "./views/Home";
+import VerifyAcc from "./views/VerifyAcc"
 
 interface IUser {
   token: {
@@ -44,6 +45,7 @@ const App = () => {
       <Route exact path="/" component={() => <Home isAuth={userData.auth} username={userData.token.username}/>}/>
       <Route exact path="/register" component={Register}/>
       <Route exact path="/login" component={Login}/>
+      <Route exact path="/verify-acc/:token" component={VerifyAcc}/>
     </Switch>
     </>
   )

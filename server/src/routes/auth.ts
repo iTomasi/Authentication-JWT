@@ -53,10 +53,28 @@ router.post("/register", (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt)
 
-        connection.query("INSERT INTO accounts (username, email, password, vcode) VALUE (?,?,?,?)", [username, email, hash, vCode(3)], (err, resp) => {
+        connection.query("INSERT INTO accounts (username, email, theimg, password, vcode) VALUE (?,?,?,?,?)", [username, email, "default.jpg", hash, vCode(3)], (err, resp) => {
             if (err) return console.log(err)
 
-            res.json({message: "Registered"})
+            connection.query("SELECT * FROM accounts WHERE id = ?", [resp.insertId], (err, resp2) => {
+                if (err) return console.log(err)
+
+                const token = jwt.sign({
+                    id: resp2[0].id,
+                    username: resp2[0].username,
+                    verified: resp2[0].verified,
+                    vcode: resp2[0].vcode
+                }, config.JWT, {expiresIn: 60*60*24})
+
+                res.json({
+                    message: "Registered",
+                    token,
+                    userData: {
+                        username: resp2[0].username,
+                        vcode: resp2[0].vcode
+                    }
+                })
+            })
         })
 
     })
@@ -89,6 +107,38 @@ router.post("/login", (req, res) => {
         })
 
     })
+});
+
+router.post("/verify-acc", (req, res) => {
+    const {code} = req.body;
+    const tokenHeader: any = req.headers["x-access-token"]
+
+    try {
+        const token: any = jwt.verify(tokenHeader, config.JWT)
+
+        connection.query("SELECT * FROM accounts WHERE id = ?", [token.id], (err, resp) => {
+            if (err) return console.log(err);
+            if (resp[0] === undefined) return res.json({message: "? XD"});
+            else if (resp[0].verified === 1) return res.json({message: "Your account is already verified"});
+            else if (code !== resp[0].vcode) return res.json({message: "Your code is invalid"});
+            
+            connection.query("UPDATE accounts SET verified = 1 WHERE id = ?", [token.id], (err, resp2) => {
+                if (err) return console.log(err)
+
+                res.json({
+                    message: `${resp[0].username} your account is verified!`,
+                    ready: 1
+                })
+            })
+        })
+    }
+
+    catch(e) {
+        res.json({
+            message: "process failed",
+            ready: 0
+        })
+    }
 })
 
 export default router;
