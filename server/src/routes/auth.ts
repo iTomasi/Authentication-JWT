@@ -1,9 +1,13 @@
 import {Router} from "express";
 import bcrypt from "bcryptjs";
 import connection from "../databases/mysql";
+import path from "path";
 import {vCode} from "../config/randomCode";
+import fsPromises from "fs";
 import jwt from "jsonwebtoken";
-import config from "../config/config"
+import config from "../config/config";
+import {userPicture_multer} from "../config/multer";
+const fs = fsPromises.promises
 const router = Router();
 
 router.get("/", (req, res) => {
@@ -139,6 +143,79 @@ router.post("/verify-acc", (req, res) => {
             message: "process failed",
             ready: 0
         })
+    }
+});
+
+router.put("/update-account", userPicture_multer, async (req, res) => {
+    const {currentpassword, username, email, newpassword, confirmnewpassword} = req.body;
+    const fileName = req.file.filename
+    let thePassword: any;
+
+    if (currentpassword === "" || !currentpassword) {
+        await fs.unlink(path.join(__dirname, "../../public/" + fileName))
+        res.json({message: "Please write your current password"})
+        return
+    }
+
+    else if (newpassword !== confirmnewpassword) {
+        await fs.unlink(path.join(__dirname, "../../public/" + fileName));
+        res.json({message: "News password are not same"});
+        return
+    }
+
+    const tokenHeader: any = req.headers["x-access-token"];
+
+    try {
+        const token: any = jwt.verify(tokenHeader, config.JWT);
+
+        connection.query("SELECT * FROM accounts WHERE id = ?", [token.id], async (err, resp) => {
+            if (err) return console.log(err)
+            if (resp[0] === undefined) return console.log("? trying hacking the website? uWu");
+
+            const compare = await bcrypt.compare(currentpassword, resp[0].password)
+
+            if (!compare) {
+                await fs.unlink(path.join(__dirname, "../../public/" + fileName));
+                res.json({message: "Current Password are not same."})
+                return
+            }
+
+            if (newpassword !== "" && confirmnewpassword !== "") {
+                const salt = await bcrypt.genSalt(10);
+                const hash = await bcrypt.hash(newpassword, salt);
+                thePassword = hash
+            }
+
+            else {
+                const salt = await bcrypt.genSalt(10);
+                const hash = await bcrypt.hash(currentpassword, salt);
+                thePassword = hash
+            }
+
+            connection.query("UPDATE accounts SET username = ?, email = ?, theimg = ?, password = ? WHERE id = ?", [username, email, fileName, thePassword, token.id], (err, resp2) => {
+                if (err) return console.log(err)
+
+                const newToken = jwt.sign({
+                    id: token.id,
+                    username: username,
+                    verified: resp[0].verified,
+                    email: email,
+                    theimg: fileName,
+                    therank: resp[0].therank
+                }, config.JWT, {expiresIn: 60*60*24})
+
+                res.json({
+                    message: "Account Updated",
+                    newToken
+                })
+
+            })
+        })
+
+    }
+
+    catch(e) {
+
     }
 })
 

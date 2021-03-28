@@ -11,6 +11,7 @@ import Login from "./views/Login";
 import Home from "./views/Home";
 import VerifyAcc from "./views/VerifyAcc";
 import Profile from "./views/Profile";
+import EditProfile from "./views/EditProfile";
 
 interface IUser {
   token: {
@@ -34,7 +35,6 @@ const App = () => {
   useEffect(() => {
     isAuthenticated()
       .then(res => {
-        console.log(res)
         setUserData(res.data)
       })
   }, [])
@@ -49,6 +49,7 @@ const App = () => {
       <Route exact path="/login" component={Login}/>
       <Route exact path="/verify-acc/:token" component={VerifyAcc}/>
       <Route exact path="/profile" component={() => <Profile img={userData.token.theimg} username={userData.token.username} rank={userData.token.therank} email={userData.token.email} />}/>
+      <Route exact path="/edit-profile" component={() => <EditProfile username={userData.token.username} email={userData.token.email} img={userData.token.theimg}/>}/>
     </Switch>
     </>
   )
