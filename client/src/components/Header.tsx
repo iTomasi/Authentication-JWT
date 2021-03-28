@@ -43,13 +43,14 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
             <div className="iw_header__right-setting">
                 <i className="i__cog fas fa-cog" onClick={showOptions}></i>
                 <div className="iw_header__right-setting-options" style={{display: displayCog ? "flex" : "none"}}>
-                    <Link to="/">Profile</Link>
+                    <Link to="/profile">Profile</Link>
+                    <Link to="/edit-profile">Edit Profile</Link>
                 </div>
             </div>
             <img src={"http://localhost:4000/img/" + img} alt={username} />
             <button type="button" onClick={() => {
                 localStorage.removeItem("token");
-                window.location.href = "/login"
+                window.location.href = "/login";
             }}>Logout</button>
             </>
         )

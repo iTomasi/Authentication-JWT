@@ -97,7 +97,8 @@ router.post("/login", (req, res) => {
             username: resp[0].username,
             verified: resp[0].verified,
             email: resp[0].email,
-            theimg: resp[0].theimg
+            theimg: resp[0].theimg,
+            therank: resp[0].therank
         }, config.JWT, {expiresIn: 60*60*24})
 
         res.json({
