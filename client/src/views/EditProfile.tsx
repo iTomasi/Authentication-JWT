@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import Axios from "axios";
+import Notification from "../components/Notification";
 import "./scss/form.scss";
 
 interface IEditProfileProps {
@@ -12,6 +13,13 @@ const EditProfile = ({username, img, email}: IEditProfileProps) => {
 
     const [imgName, setImgName] = useState<string>(img);
     const [userData, setUserData] = useState({username, email});
+    const [notification, setNotification] = useState({
+        addActive: false,
+        type: "",
+        msg: "",
+    })
+
+    let notification_Timeout: any;
 
     const handleInput = (e: any) => {
         setUserData((prev: any) => (
@@ -42,9 +50,10 @@ const EditProfile = ({username, img, email}: IEditProfileProps) => {
             headers: {"x-access-token": tokenStorage}
         })
             .then(res => {
-                if (res.data.message !== "Account Updated") return console.log(res);
+                if (res.data.message !== "Account Updated") return showNotification(res.data.message, "error");
 
                 localStorage.setItem("token", res.data.newToken);
+                showNotification(res.data.message, "success");
                 
                 setTimeout(() => {
                     window.location.href = "/"
@@ -52,7 +61,29 @@ const EditProfile = ({username, img, email}: IEditProfileProps) => {
             })
     }
 
+    const showNotification = (msg: string, type: string) => {
+        if (notification.addActive) {
+            setNotification((prev: any) => (
+                {...prev, addActive: false}
+            ))
+
+            clearTimeout(notification_Timeout)
+        }
+
+        setNotification((prev: any) => (
+            {...prev, addActive: true, msg, type}
+        ))
+
+        notification_Timeout = setTimeout(() => {
+            setNotification((prev: any) => (
+                {...prev, addActive: false}
+            ))
+        }, 3000)
+    }
+
     return (
+        <>
+        <Notification addActive={notification.addActive} type={notification.type} msg={notification.msg} />
         <form className="iw_form" onSubmit={updatingProfile}>
 
             <div className="formSection">
@@ -88,6 +119,7 @@ const EditProfile = ({username, img, email}: IEditProfileProps) => {
 
             <button type="submit">Edit Profile</button>
         </form>
+        </>
     )
 }
 

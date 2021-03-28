@@ -148,8 +148,29 @@ router.post("/verify-acc", (req, res) => {
 
 router.put("/update-account", userPicture_multer, async (req, res) => {
     const {currentpassword, username, email, newpassword, confirmnewpassword} = req.body;
-    const fileName = req.file.filename
+    let gettingFileName = req.file
+    let fileName: any;
     let thePassword: any;
+    const tokenHeader: any = req.headers["x-access-token"];
+
+    if (gettingFileName === undefined) {
+        try {
+            const token: any = jwt.verify(tokenHeader, config.JWT);
+
+            connection.query("SELECT * FROM accounts WHERE id = ?", [token.id], (err, resp) => {
+                if (err) return console.log(err)
+                fileName = resp[0].theimg
+            })
+        }
+
+        catch(e) {
+
+        }
+    }
+
+    else {
+        fileName = gettingFileName.filename
+    }
 
     if (currentpassword === "" || !currentpassword) {
         await fs.unlink(path.join(__dirname, "../../public/" + fileName))
@@ -162,9 +183,7 @@ router.put("/update-account", userPicture_multer, async (req, res) => {
         res.json({message: "News password are not same"});
         return
     }
-
-    const tokenHeader: any = req.headers["x-access-token"];
-
+    
     try {
         const token: any = jwt.verify(tokenHeader, config.JWT);
 
