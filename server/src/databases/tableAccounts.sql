@@ -5,5 +5,6 @@ CREATE TABLE accounts (
     therank VARCHAR(100) NOT NULL DEFAULT "user",
     email VARCHAR(100) NOT NULL,
     password TEXT NOT NULL,
+    theimg TEXT NOT NULL,
     vcode VARCHAR(100) NOT NULL
 );
