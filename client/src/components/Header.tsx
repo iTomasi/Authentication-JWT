@@ -131,7 +131,10 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
             <div className="iw_header__right"><HeaderRight/></div>
 
             <div className="iw_header__responsiveBar">
-                <i className="i__logout fas fa-sign-out-alt" style={{display: showLogoutIcon && isAuth ? "block" : "none"}}></i>
+                <i className="i__logout fas fa-sign-out-alt" style={{display: showLogoutIcon && isAuth ? "block" : "none"}} onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.href = "/login";
+                }}></i>
                 <i className="i__bars fas fa-bars" onClick={showNav}></i>
             </div>
         </header>
