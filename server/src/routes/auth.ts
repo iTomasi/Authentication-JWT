@@ -164,7 +164,8 @@ router.put("/update-account", userPicture_multer, async (req, res) => {
         }
 
         catch(e) {
-
+            console.log("No Token")
+            return   
         }
     }
 
@@ -211,6 +212,10 @@ router.put("/update-account", userPicture_multer, async (req, res) => {
                 thePassword = hash
             }
 
+            // removing old img
+            await fs.unlink(path.join(__dirname, "../../public/" + resp[0].theimg))
+            //
+
             connection.query("UPDATE accounts SET username = ?, email = ?, theimg = ?, password = ? WHERE id = ?", [username, email, fileName, thePassword, token.id], (err, resp2) => {
                 if (err) return console.log(err)
 
@@ -234,7 +239,7 @@ router.put("/update-account", userPicture_multer, async (req, res) => {
     }
 
     catch(e) {
-
+        console.log("No TOken")
     }
 })
 

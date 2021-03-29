@@ -12,21 +12,35 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
     
     const history = useHistory();
 
-    const [displayCog, setDisplayCog] = useState(false);
+    const [displayCog, setDisplayCog] = useState<boolean>(false);
+    const [showNavResponsive, setShowNavResponsive] = useState<boolean>(false);
+    const [showLogoutIcon, setShowLogoutIcon] = useState<boolean>(false);
 
     useEffect(() => {
+
+        window.addEventListener("resize", whenResponsive);
+        window.addEventListener("resize", whenResponsive_logoutIcon);
+
         const hiddeOptions = () => {
             if (displayCog) {
                 setDisplayCog(false)
             }
         }
 
-        window.addEventListener("click", hiddeOptions)
+        const hiddeNavResponsive = () => {
+            if (showNavResponsive) {
+                setShowNavResponsive(false)
+            }
+        }
+
+        window.addEventListener("click", hiddeOptions);
+        window.addEventListener("click", hiddeNavResponsive)
 
         return () => {
             window.removeEventListener("click", hiddeOptions)
+            window.removeEventListener("click", hiddeNavResponsive)
         }
-    }, [displayCog])
+    }, [displayCog, showNavResponsive])
 
     const HeaderRight = () => {
         if (!isAuth) {
@@ -40,15 +54,18 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
 
         return (
             <>
-            <div className="iw_header__right-setting">
-                <i className="i__cog fas fa-cog" onClick={showOptions}></i>
-                <div className="iw_header__right-setting-options" style={{display: displayCog ? "flex" : "none"}}>
+
+            <div className="iw_header__right-picture">
+                <img src={"http://localhost:4000/img/" + img} alt={username} onClick={showOptions}/>
+
+                <div className="iw_header__right-picture-options" style={{display: displayCog ? "flex" : "none"}}>
                     <Link to="/profile">Profile</Link>
                     <Link to="/edit-profile">Edit Profile</Link>
                 </div>
+
             </div>
-            <img src={"http://localhost:4000/img/" + img} alt={username} />
-            <button type="button" onClick={() => {
+
+            <button type="button" id="logoutBtn" onClick={() => {
                 localStorage.removeItem("token");
                 window.location.href = "/login";
             }}>Logout</button>
@@ -62,19 +79,61 @@ const Header = ({isAuth, img, username}: IHeaderProps) => {
         return setDisplayCog(false)
     }
 
+    const showNav = () => {
+        if (window.innerWidth <= 890) {
+
+            if (!showNavResponsive) {
+                setShowNavResponsive(true)
+                return
+            }
+
+            return setShowNavResponsive(false)
+
+        }
+    }
+
+    const whenResponsive = () => {
+        if (window.innerWidth >= 890) {
+            setShowNavResponsive(true)
+            return
+        }
+
+        else {
+            setShowNavResponsive(false)
+            return
+        }
+    }
+
+    const whenResponsive_logoutIcon = () => {
+        if (window.innerWidth <= 500) {
+            setShowLogoutIcon(true);
+            return
+        }
+
+        else {
+            setShowLogoutIcon(false);
+            return
+        }
+    }
+
     return (
         <header className="iw_header">
             <div className="iw_header__left">
                 <h2>JWT Login</h2>
             </div>
 
-            <nav>
+            <nav style={{display: window.innerWidth <= 890 && !showNavResponsive ? "none" : "block"}}>
                 <ul>
                     <li><NavLink to="/">Home</NavLink></li>
                 </ul>
             </nav>
 
             <div className="iw_header__right"><HeaderRight/></div>
+
+            <div className="iw_header__responsiveBar">
+                <i className="i__logout fas fa-sign-out-alt" style={{display: showLogoutIcon ? "block" : "none"}}></i>
+                <i className="i__bars fas fa-bars" onClick={showNav}></i>
+            </div>
         </header>
     )
 }
