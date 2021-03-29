@@ -56,3 +56,7 @@
         outline: none;
     }
 }
+
+@media screen and (max-width: 430px) {
+    .iw_form {width: 90%;}
+}

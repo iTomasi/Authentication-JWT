@@ -11,7 +11,7 @@ interface IEditProfileProps {
 
 const EditProfile = ({username, img, email}: IEditProfileProps) => {
 
-    const [imgName, setImgName] = useState<string>(img);
+    const [imgName, setImgName] = useState<string>(img.length > 13 ? img.substring(0, 13) + "..." : img);
     const [userData, setUserData] = useState({username, email});
     const [notification, setNotification] = useState({
         addActive: false,
