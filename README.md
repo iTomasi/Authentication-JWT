@@ -4,6 +4,8 @@ JWT Register Login
 
 this project was made with ReactJS and NodeJS (TypeScript) these modules were considered during development:
 
+PD: I will not include the modules related to typescript, I will only say the modules that depend completely on the development for the user visualization
+
 NodeJS (Backend)
 
 <ul>
